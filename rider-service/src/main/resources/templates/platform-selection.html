@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Choose Platform - RideShare</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="platform-page">
+    <div class="platform-container">
+        <div class="platform-header">
+            <button onclick="history.back()" class="back-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="header-content">
+                <h1>Choose Your Platform</h1>
+                <p>Select your preferred ride service</p>
+            </div>
+            <div class="user-avatar" th:text="${user.fullName.substring(0,1).toUpperCase()}">U</div>
+        </div>
+        
+        <div class="trip-summary">
+            <div class="trip-route">
+                <div class="route-point">
+                    <div class="route-dot pickup-dot"></div>
+                    <div class="route-text">
+                        <span class="route-label">From</span>
+                        <span class="route-address" th:text="${pickup.startsWith('Current Location:') ? 'Current Location' : pickup}">Pickup Location</span>
+                    </div>
+                </div>
+                <div class="route-connector"></div>
+                <div class="route-point">
+                    <div class="route-dot drop-dot"></div>
+                    <div class="route-text">
+                        <span class="route-label">To</span>
+                        <span class="route-address" th:text="${drop.length() > 50 ? drop.substring(0, 50) + '...' : drop}">Drop Location</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="platforms-grid">
+            <div class="platform-card-large uber-platform" onclick="selectPlatform('Uber')">
+                <div class="platform-background uber-bg">
+                    <div class="platform-pattern"></div>
+                </div>
+                <div class="platform-content">
+                    <div class="platform-logo-large">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                    </div>
+                    <h2>Uber</h2>
+                    <p class="platform-tagline">Move with Uber</p>
+                    <div class="platform-features">
+                        <div class="feature">✓ Global coverage</div>
+                        <div class="feature">✓ Premium vehicles</div>
+                        <div class="feature">✓ 24/7 support</div>
+                    </div>
+                    <div class="platform-pricing">
+                        <span class="price-from">From ₹55</span>
+                        <span class="price-label">Starting price</span>
+                    </div>
+                </div>
+                <div class="platform-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12H19M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="platform-card-large ola-platform" onclick="selectPlatform('Ola')">
+                <div class="platform-background ola-bg">
+                    <div class="platform-pattern"></div>
+                </div>
+                <div class="platform-content">
+                    <div class="platform-logo-large">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="#333">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                    </div>
+                    <h2>Ola</h2>
+                    <p class="platform-tagline">Chalo Niklo</p>
+                    <div class="platform-features">
+                        <div class="feature">✓ India's favorite</div>
+                        <div class="feature">✓ Auto & Bike rides</div>
+                        <div class="feature">✓ Best local rates</div>
+                    </div>
+                    <div class="platform-pricing">
+                        <span class="price-from">From ₹25</span>
+                        <span class="price-label">Starting price</span>
+                    </div>
+                </div>
+                <div class="platform-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12H19M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="platform-card-large rapido-platform" onclick="selectPlatform('Rapido')">
+                <div class="platform-background rapido-bg">
+                    <div class="platform-pattern"></div>
+                </div>
+                <div class="platform-content">
+                    <div class="platform-logo-large">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 2L2 7V10C2 16 6 20.5 12 22C18 20.5 22 16 22 10V7L12 2Z"/>
+                        </svg>
+                    </div>
+                    <h2>Rapido</h2>
+                    <p class="platform-tagline">Ride Smart</p>
+                    <div class="platform-features">
+                        <div class="feature">✓ Fastest rides</div>
+                        <div class="feature">✓ Bike taxis</div>
+                        <div class="feature">✓ Most affordable</div>
+                    </div>
+                    <div class="platform-pricing">
+                        <span class="price-from">From ₹15</span>
+                        <span class="price-label">Starting price</span>
+                    </div>
+                </div>
+                <div class="platform-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12H19M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="platform-comparison">
+            <h3>Quick Comparison</h3>
+            <div class="comparison-table">
+                <div class="comparison-row">
+                    <div class="comparison-label">Cheapest Option</div>
+                    <div class="comparison-value">Rapido Bike - ₹15</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-label">Premium Option</div>
+                    <div class="comparison-value">Uber Premier - ₹85</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-label">Local Favorite</div>
+                    <div class="comparison-value">Ola Auto - ₹25</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function selectPlatform(platform) {
+            // Add loading animation
+            const card = document.querySelector(`.${platform.toLowerCase()}-platform`);
+            card.classList.add('loading');
+            
+            // Navigate to vehicle selection
+            const params = new URLSearchParams(window.location.search);
+            params.set('platform', platform);
+            
+            setTimeout(() => {
+                window.location.href = '/vehicle-selection?' + params.toString();
+            }, 500);
+        }
+        
+        // Add entrance animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.platform-card-large');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('animate-in');
+                }, index * 150);
+            });
+        });
+    </script>
+    
+    <style>
+        * {
+            color: inherit;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: #1a1a1a !important;
+        }
+        
+        p, span, div {
+            color: #666 !important;
+        }
+        
+        .platform-content h2,
+        .platform-content p,
+        .platform-content span,
+        .platform-content div {
+            color: white !important;
+        }
+        
+        .ola-platform .platform-content h2,
+        .ola-platform .platform-content p,
+        .ola-platform .platform-content span,
+        .ola-platform .platform-content div {
+            color: #333 !important;
+        }
+        .platform-page {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .platform-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        .back-btn {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .header-content {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .header-content h1 {
+            color: #1a1a1a !important;
+        }
+        
+        .header-content p {
+            color: #666 !important;
+        }
+        
+        .header-content h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .header-content p {
+            margin: 8px 0 0 0;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .trip-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .trip-route {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .route-point {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+        
+        .route-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .pickup-dot {
+            background: #10b981;
+        }
+        
+        .drop-dot {
+            background: #ef4444;
+        }
+        
+        .route-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .route-label {
+            color: #666 !important;
+        }
+        
+        .route-address {
+            color: #1a1a1a !important;
+        }
+        
+        .route-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .route-address {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .route-connector {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(to right, #10b981, #ef4444);
+            border-radius: 1px;
+            flex-shrink: 0;
+        }
+        
+        .platforms-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .platform-card-large {
+            position: relative;
+            height: 180px;
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .platform-card-large.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .platform-card-large:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        
+        .platform-card-large.loading {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        
+        .platform-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .uber-bg {
+            background: linear-gradient(135deg, #000000 0%, #434343 100%);
+        }
+        
+        .ola-bg {
+            background: linear-gradient(135deg, #FFE135 0%, #FFC107 100%);
+        }
+        
+        .rapido-bg {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+        }
+        
+        .platform-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+        
+        .platform-content {
+            position: relative;
+            z-index: 2;
+            padding: 32px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            color: white !important;
+        }
+        
+        .ola-platform .platform-content {
+            color: #333 !important;
+        }
+        
+        .platform-content * {
+            color: inherit !important;
+        }
+        
+        .platform-logo-large {
+            margin-bottom: 16px;
+        }
+        
+        .platform-content h2 {
+            margin: 0 0 8px 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .platform-tagline {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .platform-features {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .feature {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .platform-pricing {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .price-from {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .price-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .platform-arrow {
+            position: absolute;
+            top: 50%;
+            right: 32px;
+            transform: translateY(-50%);
+            z-index: 3;
+            opacity: 0.8;
+        }
+        
+        .platform-comparison {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .platform-comparison h3 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a !important;
+        }
+        
+        .comparison-table {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .comparison-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+        
+        .comparison-label {
+            font-size: 14px;
+            color: #666 !important;
+        }
+        
+        .comparison-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a !important;
+        }
+        
+        @media (max-width: 768px) {
+            .platform-container {
+                padding: 16px;
+            }
+            
+            .platform-card-large {
+                height: 160px;
+            }
+            
+            .platform-content {
+                padding: 24px;
+            }
+            
+            .platform-content h2 {
+                font-size: 28px;
+            }
+            
+            .trip-route {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .route-connector {
+                width: 2px;
+                height: 20px;
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</body>
+</html>

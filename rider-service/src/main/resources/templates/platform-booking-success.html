@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Booking Confirmed - RideShare</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="price-page">
+    <div class="price-container">
+        <div class="success-container">
+            <div class="success-animation">
+                <div class="checkmark-circle">
+                    <div class="checkmark">✓</div>
+                </div>
+            </div>
+            
+            <h1 class="success-title">Booking Confirmed!</h1>
+            <p class="success-subtitle">Your ride has been booked successfully</p>
+            
+            <div class="booking-details-card">
+                <div class="platform-badge" th:classappend="${platform.toLowerCase()}">
+                    <span th:text="${platform}">Uber</span>
+                </div>
+                
+                <div class="ride-summary">
+                    <div class="vehicle-info">
+                        <div class="vehicle-icon-large">
+                            <span th:if="${vehicleType.contains('Bike') or vehicleType.contains('Moto')}">🏍️</span>
+                            <span th:if="${vehicleType.contains('Auto')}">🛺</span>
+                            <span th:if="${vehicleType.contains('Go') or vehicleType.contains('Mini') or vehicleType.contains('Cab')}">🚗</span>
+                            <span th:if="${vehicleType.contains('Premier') or vehicleType.contains('SUV') or vehicleType.contains('XL') or vehicleType.contains('Lux')}">🚙</span>
+                        </div>
+                        <div class="vehicle-details">
+                            <h3 th:text="${vehicleType}">UberGo</h3>
+                            <p class="price-display" th:text="'₹' + ${price}">₹120</p>
+                        </div>
+                    </div>
+                    
+                    <div class="trip-route">
+                        <div class="route-point pickup">
+                            <div class="route-dot pickup-dot"></div>
+                            <div class="route-info">
+                                <span class="route-label">Pickup</span>
+                                <span class="route-address" th:text="${ride.pickup}">Pickup Location</span>
+                            </div>
+                        </div>
+                        
+                        <div class="route-line">
+                            <div class="route-connector"></div>
+                        </div>
+                        
+                        <div class="route-point drop">
+                            <div class="route-dot drop-dot"></div>
+                            <div class="route-info">
+                                <span class="route-label">Drop</span>
+                                <span class="route-address" th:text="${ride.drop}">Drop Location</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="booking-info">
+                    <div class="info-row">
+                        <span class="info-label">Booking ID</span>
+                        <span class="info-value" th:text="${ride.rideId}">RB123456</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Status</span>
+                        <span class="info-value status-confirmed">Confirmed</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Estimated Arrival</span>
+                        <span class="info-value">3-5 minutes</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <div class="step-card">
+                    <div class="step-icon">📱</div>
+                    <div class="step-content">
+                        <h4>Open Platform App</h4>
+                        <p th:text="'Open your ' + ${platform} + ' app to track your driver'">Open your Uber app to track your driver</p>
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-icon">🚗</div>
+                    <div class="step-content">
+                        <h4>Driver Assigned</h4>
+                        <p>You'll receive driver details shortly</p>
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-icon">📍</div>
+                    <div class="step-content">
+                        <h4>Be Ready</h4>
+                        <p>Wait at your pickup location</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="/my-rides" class="btn primary">View My Rides</a>
+                <a href="/passenger" class="btn secondary">Book Another Ride</a>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .success-container {
+            padding: 40px 20px;
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .success-animation {
+            margin-bottom: 30px;
+        }
+        
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .checkmark {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        
+        .success-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0 0 8px 0;
+        }
+        
+        .success-subtitle {
+            color: #666;
+            margin: 0 0 30px 0;
+            font-size: 16px;
+        }
+        
+        .booking-details-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .platform-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .platform-badge.uber {
+            background: #000;
+            color: white;
+        }
+        
+        .platform-badge.ola {
+            background: #FFD700;
+            color: #333;
+        }
+        
+        .platform-badge.rapido {
+            background: #FF6B35;
+            color: white;
+        }
+        
+        .vehicle-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .vehicle-icon-large {
+            font-size: 48px;
+            width: 80px;
+            height: 80px;
+            background: #f8f9fa;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .vehicle-details h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .price-display {
+            font-size: 24px;
+            font-weight: 700;
+            color: #10b981;
+            margin: 0;
+        }
+        
+        .trip-route {
+            margin-bottom: 24px;
+        }
+        
+        .route-point {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 12px 0;
+        }
+        
+        .route-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .route-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .route-address {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .booking-info {
+            border-top: 1px solid #f0f0f0;
+            padding-top: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .status-confirmed {
+            color: #10b981 !important;
+            font-weight: 600 !important;
+        }
+        
+        .next-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .step-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: left;
+        }
+        
+        .step-icon {
+            font-size: 24px;
+            width: 48px;
+            height: 48px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .step-content h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .step-content p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</body>
+</html>

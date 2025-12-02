@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${platform} + ' Vehicles - RideShare'">Vehicle Selection - RideShare</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="vehicle-page">
+    <div class="vehicle-container">
+        <div class="vehicle-header">
+            <button onclick="history.back()" class="back-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="header-content">
+                <div class="platform-badge" th:classappend="${platform.toLowerCase()}">
+                    <span th:text="${platform}">Platform</span>
+                </div>
+                <h1>Choose Your Vehicle</h1>
+                <p>Select the perfect ride for your journey</p>
+            </div>
+            <div class="user-avatar" th:text="${user.fullName.substring(0,1).toUpperCase()}">U</div>
+        </div>
+        
+        <div class="trip-info">
+            <div class="trip-route">
+                <div class="route-point">
+                    <div class="route-dot pickup-dot"></div>
+                    <div class="route-text">
+                        <span class="route-label">From</span>
+                        <span class="route-address" th:text="${pickup.startsWith('Current Location:') ? 'Current Location' : pickup}">Pickup Location</span>
+                    </div>
+                </div>
+                <div class="route-connector"></div>
+                <div class="route-point">
+                    <div class="route-dot drop-dot"></div>
+                    <div class="route-text">
+                        <span class="route-label">To</span>
+                        <span class="route-address" th:text="${drop.length() > 50 ? drop.substring(0, 50) + '...' : drop}">Drop Location</span>
+                    </div>
+                </div>
+            </div>
+            <div class="trip-details">
+                <span class="trip-distance" th:text="${quotes[0].distance}">5.2 km</span>
+                <span class="trip-duration" th:text="${quotes[0].duration}">15 min</span>
+            </div>
+        </div>
+        
+        <div class="vehicles-grid">
+            <div th:each="quote : ${quotes}" th:if="${quote.platform == platform}" 
+                 class="vehicle-card-large" th:classappend="${quote.available} ? 'available' : 'unavailable'"
+                 th:data-platform="${quote.platform}" th:data-vehicle="${quote.vehicleType}" th:data-price="${quote.price}">
+                
+                <div class="vehicle-icon-container">
+                    <div class="vehicle-icon-large">
+                        <span th:if="${quote.vehicleType.contains('Bike') or quote.vehicleType.contains('Moto')}">🏍️</span>
+                        <span th:if="${quote.vehicleType.contains('Auto')}">🛺</span>
+                        <span th:if="${quote.vehicleType.contains('Go') or quote.vehicleType.contains('Mini') or quote.vehicleType.contains('Cab')}">🚗</span>
+                        <span th:if="${quote.vehicleType.contains('Premier') or quote.vehicleType.contains('SUV') or quote.vehicleType.contains('XL') or quote.vehicleType.contains('Lux')}">🚙</span>
+                    </div>
+                    <div class="vehicle-badge" th:if="${quote.vehicleType.contains('Premier') or quote.vehicleType.contains('Lux')}">Premium</div>
+                    <div class="vehicle-badge eco" th:if="${quote.vehicleType.contains('Bike') or quote.vehicleType.contains('Auto')}">Eco</div>
+                </div>
+                
+                <div class="vehicle-info">
+                    <h3 th:text="${quote.vehicleType}">Vehicle Type</h3>
+                    <p class="vehicle-description" th:switch="${quote.vehicleType}">
+                        <span th:case="'UberGo'">Affordable, everyday rides</span>
+                        <span th:case="'UberX'">Comfortable sedan rides</span>
+                        <span th:case="'Uber Premier'">Premium sedan experience</span>
+                        <span th:case="'Mini'">Compact & budget-friendly</span>
+                        <span th:case="'Prime Sedan'">Comfortable AC sedan</span>
+                        <span th:case="'Prime SUV'">Spacious SUV rides</span>
+                        <span th:case="'Auto'">Quick local rides</span>
+                        <span th:case="'Bike Lite'">Fastest & cheapest</span>
+                        <span th:case="*">Reliable transportation</span>
+                    </p>
+                    
+                    <div class="vehicle-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">⏱️</span>
+                            <span th:text="${quote.duration} + ' away'">3 min away</span>
+                        </div>
+                        <div class="feature-item" th:if="${quote.vehicleType.contains('Premier') or quote.vehicleType.contains('Lux')}">
+                            <span class="feature-icon">⭐</span>
+                            <span>Premium service</span>
+                        </div>
+                        <div class="feature-item" th:if="${quote.vehicleType.contains('Auto') or quote.vehicleType.contains('Bike')}">
+                            <span class="feature-icon">🌱</span>
+                            <span>Eco-friendly</span>
+                        </div>
+                        <div class="feature-item" th:if="${quote.available}">
+                            <span class="feature-icon">✅</span>
+                            <span>Available now</span>
+                        </div>
+                        <div class="feature-item" th:unless="${quote.available}">
+                            <span class="feature-icon">❌</span>
+                            <span>Currently unavailable</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="vehicle-pricing">
+                    <div class="price-main">
+                        <span class="currency">₹</span>
+                        <span class="amount" th:text="${quote.price}">120</span>
+                    </div>
+                    <div class="price-details">
+                        <span class="price-label">Total fare</span>
+                        <span class="price-breakdown" th:text="'~₹' + ${#numbers.formatDecimal(quote.price/5.2, 1, 1)} + '/km'">~₹23/km</span>
+                    </div>
+                </div>
+                
+                <div class="selection-indicator">
+                    <div class="checkmark">✓</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="booking-section">
+            <div class="selected-vehicle-info" id="selectedInfo" style="display: none;">
+                <div class="selected-details">
+                    <span id="selectedVehicle">No vehicle selected</span>
+                    <span id="selectedPrice">₹0</span>
+                </div>
+            </div>
+            
+            <button id="bookBtn" class="book-button" disabled>
+                <span class="book-text">Select a vehicle to continue</span>
+                <div class="book-loader" style="display: none;">
+                    <div class="loader-spinner"></div>
+                </div>
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        let selectedVehicle = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setupVehicleSelection();
+            animateVehicleCards();
+        });
+        
+        function setupVehicleSelection() {
+            const vehicleCards = document.querySelectorAll('.vehicle-card-large.available');
+            
+            vehicleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    selectVehicle(this);
+                });
+            });
+            
+            document.getElementById('bookBtn').addEventListener('click', bookSelectedVehicle);
+        }
+        
+        function selectVehicle(card) {
+            // Remove previous selection
+            document.querySelectorAll('.vehicle-card-large').forEach(c => c.classList.remove('selected'));
+            
+            // Select current card
+            card.classList.add('selected');
+            
+            // Store selection data
+            selectedVehicle = {
+                platform: card.dataset.platform,
+                vehicleType: card.dataset.vehicle,
+                price: card.dataset.price
+            };
+            
+            // Update UI
+            updateBookingSection();
+        }
+        
+        function updateBookingSection() {
+            const selectedInfo = document.getElementById('selectedInfo');
+            const selectedVehicleSpan = document.getElementById('selectedVehicle');
+            const selectedPriceSpan = document.getElementById('selectedPrice');
+            const bookBtn = document.getElementById('bookBtn');
+            const bookText = bookBtn.querySelector('.book-text');
+            
+            if (selectedVehicle) {
+                selectedVehicleSpan.textContent = `${selectedVehicle.platform} ${selectedVehicle.vehicleType}`;
+                selectedPriceSpan.textContent = `₹${selectedVehicle.price}`;
+                selectedInfo.style.display = 'flex';
+                
+                bookBtn.disabled = false;
+                bookBtn.classList.add('active');
+                bookText.textContent = `Book ${selectedVehicle.vehicleType} • ₹${selectedVehicle.price}`;
+            }
+        }
+        
+        function bookSelectedVehicle() {
+            if (!selectedVehicle) return;
+            
+            const bookBtn = document.getElementById('bookBtn');
+            const bookText = bookBtn.querySelector('.book-text');
+            const bookLoader = bookBtn.querySelector('.book-loader');
+            
+            // Show loading state
+            bookBtn.classList.add('loading');
+            bookText.style.display = 'none';
+            bookLoader.style.display = 'flex';
+            
+            // Create and submit form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/book-platform-ride';
+            
+            const params = new URLSearchParams(window.location.search);
+            const fields = {
+                pickup: params.get('pickup') || '',
+                drop: params.get('drop') || '',
+                platform: selectedVehicle.platform,
+                vehicleType: selectedVehicle.vehicleType,
+                price: selectedVehicle.price
+            };
+            
+            Object.keys(fields).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(form);
+            
+            setTimeout(() => {
+                form.submit();
+            }, 1000);
+        }
+        
+        function animateVehicleCards() {
+            const cards = document.querySelectorAll('.vehicle-card-large');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('animate-in');
+                }, index * 100);
+            });
+        }
+    </script>
+    
+    <style>
+        * {
+            color: inherit;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: #1a1a1a !important;
+        }
+        
+        p, span, div {
+            color: #666 !important;
+        }
+        
+        .platform-content h2,
+        .platform-content p,
+        .platform-content span,
+        .platform-content div {
+            color: white !important;
+        }
+        
+        .ola-platform .platform-content h2,
+        .ola-platform .platform-content p,
+        .ola-platform .platform-content span,
+        .ola-platform .platform-content div {
+            color: #333 !important;
+        }
+        .vehicle-page {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .vehicle-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .vehicle-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        .platform-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        
+        .platform-badge.uber {
+            background: #000;
+            color: white;
+        }
+        
+        .platform-badge.ola {
+            background: #FFD700;
+            color: #333;
+        }
+        
+        .platform-badge.rapido {
+            background: #FF6B35;
+            color: white;
+        }
+        
+        .trip-info {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .trip-details {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .trip-distance, .trip-duration {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .trip-distance::before {
+            content: '📏';
+        }
+        
+        .trip-duration::before {
+            content: '⏱️';
+        }
+        
+        .vehicles-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 100px;
+        }
+        
+        .vehicle-card-large {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 3px solid transparent;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .vehicle-card-large.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .vehicle-card-large.available:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        .vehicle-card-large.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+        }
+        
+        .vehicle-card-large.unavailable {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .vehicle-icon-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .vehicle-icon-large {
+            font-size: 48px;
+            width: 80px;
+            height: 80px;
+            background: #f8f9fa;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .vehicle-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #667eea;
+            color: white;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        .vehicle-badge.eco {
+            background: #10b981;
+        }
+        
+        .vehicle-info {
+            flex: 1;
+        }
+        
+        .vehicle-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a !important;
+        }
+        
+        .vehicle-description {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: #666 !important;
+        }
+        
+        .vehicle-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #666 !important;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        
+        .feature-icon {
+            font-size: 14px;
+        }
+        
+        .vehicle-pricing {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        
+        .price-main {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            margin-bottom: 4px;
+        }
+        
+        .currency {
+            font-size: 18px;
+            font-weight: 600;
+            color: #10b981;
+        }
+        
+        .amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #10b981;
+        }
+        
+        .price-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        
+        .price-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .price-breakdown {
+            font-size: 11px;
+            color: #999;
+        }
+        
+        .selection-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s ease;
+        }
+        
+        .vehicle-card-large.selected .selection-indicator {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .checkmark {
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .booking-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .selected-vehicle-info {
+            max-width: 800px;
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .book-button {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            border: none;
+            border-radius: 16px;
+            padding: 18px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .book-button:disabled {
+            background: #e9ecef !important;
+            color: #666 !important;
+            cursor: not-allowed;
+        }
+        
+        .book-button.active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .book-button.loading {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .book-loader {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .loader-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .vehicle-container {
+                padding: 16px;
+            }
+            
+            .vehicle-card-large {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+            
+            .vehicle-pricing {
+                text-align: center;
+            }
+            
+            .trip-route {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .route-connector {
+                width: 2px;
+                height: 20px;
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</body>
+</html>

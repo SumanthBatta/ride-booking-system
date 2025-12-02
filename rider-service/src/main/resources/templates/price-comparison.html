@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Compare Prices - RideShare</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="price-page">
+    <div class="price-container">
+        <div class="price-header">
+            <button onclick="history.back()" class="back-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="header-content">
+                <h1>Choose Your Ride</h1>
+                <p>Compare prices across platforms</p>
+            </div>
+            <div class="user-avatar" th:text="${user.fullName.substring(0,1).toUpperCase()}">U</div>
+        </div>
+        
+        <div class="route-card">
+            <div class="route-header">
+                <div class="route-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="route-time" th:text="${quotes[0].duration}">15 min</span>
+                <span class="route-distance" th:text="${quotes[0].distance}">5.2 km</span>
+            </div>
+            <div class="route-path">
+                <div class="location from">
+                    <div class="location-dot pickup-dot"></div>
+                    <div class="location-text">
+                        <div class="location-label">From</div>
+                        <div class="location-name" th:text="${pickup}">Pickup Location</div>
+                    </div>
+                </div>
+                <div class="route-line">
+                    <div class="route-connector"></div>
+                </div>
+                <div class="location to">
+                    <div class="location-dot drop-dot"></div>
+                    <div class="location-text">
+                        <div class="location-label">To</div>
+                        <div class="location-name" th:text="${drop}">Drop Location</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="platforms-grid">
+            <!-- Uber Section -->
+            <div class="platform-card uber-card">
+                <div class="platform-brand">
+                    <div class="brand-logo uber-logo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        </svg>
+                    </div>
+                    <div class="brand-info">
+                        <h3>Uber</h3>
+                        <span class="brand-tagline">Move with Uber</span>
+                    </div>
+                </div>
+                <div class="vehicle-list">
+                    <div th:each="quote : ${quotes}" th:if="${quote.platform == 'Uber'}" 
+                         class="ride-option" th:classappend="${quote.available} ? 'available' : 'unavailable'"
+                         th:data-platform="${quote.platform}" th:data-vehicle="${quote.vehicleType}" th:data-price="${quote.price}">
+                        <div class="vehicle-icon">
+                            <span th:if="${quote.vehicleType.contains('Moto')}">🏍️</span>
+                            <span th:if="${quote.vehicleType.contains('Go') or quote.vehicleType.contains('X')}">🚗</span>
+                            <span th:if="${quote.vehicleType.contains('Premier') or quote.vehicleType.contains('XL')}">🚙</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-name" th:text="${quote.vehicleType}">UberGo</div>
+                            <div class="ride-eta" th:text="${quote.duration} + ' away'">2 min away</div>
+                        </div>
+                        <div class="ride-price">
+                            <span class="price-amount" th:text="'₹' + ${quote.price}">₹120</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ola Section -->
+            <div class="platform-card ola-card">
+                <div class="platform-brand">
+                    <div class="brand-logo ola-logo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                    </div>
+                    <div class="brand-info">
+                        <h3>Ola</h3>
+                        <span class="brand-tagline">Chalo Niklo</span>
+                    </div>
+                </div>
+                <div class="vehicle-list">
+                    <div th:each="quote : ${quotes}" th:if="${quote.platform == 'Ola'}" 
+                         class="ride-option" th:classappend="${quote.available} ? 'available' : 'unavailable'"
+                         th:data-platform="${quote.platform}" th:data-vehicle="${quote.vehicleType}" th:data-price="${quote.price}">
+                        <div class="vehicle-icon">
+                            <span th:if="${quote.vehicleType.contains('Bike')}">🏍️</span>
+                            <span th:if="${quote.vehicleType.contains('Auto')}">🛺</span>
+                            <span th:if="${quote.vehicleType.contains('Mini') or quote.vehicleType.contains('Prime')}">🚗</span>
+                            <span th:if="${quote.vehicleType.contains('SUV') or quote.vehicleType.contains('Lux')}">🚙</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-name" th:text="${quote.vehicleType}">Mini</div>
+                            <div class="ride-eta" th:text="${quote.duration} + ' away'">3 min away</div>
+                        </div>
+                        <div class="ride-price">
+                            <span class="price-amount" th:text="'₹' + ${quote.price}">₹115</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rapido Section -->
+            <div class="platform-card rapido-card">
+                <div class="platform-brand">
+                    <div class="brand-logo rapido-logo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7V10C2 16 6 20.5 12 22C18 20.5 22 16 22 10V7L12 2Z"/>
+                        </svg>
+                    </div>
+                    <div class="brand-info">
+                        <h3>Rapido</h3>
+                        <span class="brand-tagline">Ride Smart</span>
+                    </div>
+                </div>
+                <div class="vehicle-list">
+                    <div th:each="quote : ${quotes}" th:if="${quote.platform == 'Rapido'}" 
+                         class="ride-option" th:classappend="${quote.available} ? 'available' : 'unavailable'"
+                         th:data-platform="${quote.platform}" th:data-vehicle="${quote.vehicleType}" th:data-price="${quote.price}">
+                        <div class="vehicle-icon">
+                            <span th:if="${quote.vehicleType.contains('Bike')}">🏍️</span>
+                            <span th:if="${quote.vehicleType.contains('Auto')}">🛺</span>
+                            <span th:if="${quote.vehicleType.contains('Cab')}">🚗</span>
+                        </div>
+                        <div class="ride-details">
+                            <div class="ride-name" th:text="${quote.vehicleType}">Bike Lite</div>
+                            <div class="ride-eta" th:text="${quote.duration} + ' away'">1 min away</div>
+                        </div>
+                        <div class="ride-price">
+                            <span class="price-amount" th:text="'₹' + ${quote.price}">₹60</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bottom-section">
+            <div class="price-insights">
+                <div class="insight-card cheapest-card">
+                    <div class="insight-icon">💰</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Cheapest</div>
+                        <div class="insight-value" id="cheapest-option">Rapido Bike - ₹45</div>
+                    </div>
+                </div>
+                <div class="insight-card fastest-card">
+                    <div class="insight-icon">⚡</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Fastest</div>
+                        <div class="insight-value" id="fastest-option">Uber Moto - 8 min</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="booking-section">
+                <button id="book-btn" class="book-button" onclick="bookSelectedRide()" disabled>
+                    <span class="book-text">Select a ride to continue</span>
+                    <svg class="book-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12H19M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        let selectedRide = null;
+        const pickupLocation = /*[[${pickup}]]*/ 'Pickup Location';
+        const dropLocation = /*[[${drop}]]*/ 'Drop Location';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            findBestDeals();
+            setupRideSelection();
+        });
+        
+        function findBestDeals() {
+            const rideOptions = document.querySelectorAll('.ride-option.available');
+            let cheapest = null;
+            let cheapestPrice = Infinity;
+            
+            rideOptions.forEach(option => {
+                const priceText = option.querySelector('.price-amount').textContent;
+                const price = parseFloat(priceText.replace('₹', ''));
+                
+                if (price < cheapestPrice) {
+                    cheapestPrice = price;
+                    cheapest = option;
+                }
+            });
+            
+            if (cheapest) {
+                cheapest.classList.add('cheapest-option');
+                const platform = cheapest.closest('.platform-card').querySelector('h3').textContent;
+                const vehicle = cheapest.querySelector('.ride-name').textContent;
+                document.getElementById('cheapest-option').textContent = `${platform} ${vehicle} - ₹${cheapestPrice}`;
+            }
+        }
+        
+        function setupRideSelection() {
+            const rideOptions = document.querySelectorAll('.ride-option.available');
+            rideOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    selectRideOption(this);
+                });
+            });
+        }
+        
+        function selectRideOption(element) {
+            // Remove previous selection
+            document.querySelectorAll('.ride-option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Select current option
+            element.classList.add('selected');
+            
+            // Store selection using data attributes
+            const platform = element.dataset.platform;
+            const vehicle = element.dataset.vehicle;
+            const price = element.dataset.price;
+            
+            selectedRide = { platform, vehicle, price: '₹' + price };
+            
+            // Update book button
+            const bookBtn = document.getElementById('book-btn');
+            const bookText = bookBtn.querySelector('.book-text');
+            
+            bookBtn.disabled = false;
+            bookBtn.classList.add('active');
+            bookText.textContent = `Book ${platform} ${vehicle} • ₹${price}`;
+        }
+        
+        function bookSelectedRide() {
+            if (!selectedRide) {
+                alert('Please select a ride option first');
+                return;
+            }
+            
+            // Add loading state
+            const bookBtn = document.getElementById('book-btn');
+            const bookText = bookBtn.querySelector('.book-text');
+            
+            bookBtn.classList.add('loading');
+            bookText.textContent = 'Booking your ride...';
+            
+            // Create form and submit booking
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/book-platform-ride';
+            
+            // Add form fields
+            const fields = {
+                pickup: pickupLocation,
+                drop: dropLocation,
+                platform: selectedRide.platform,
+                vehicleType: selectedRide.vehicle,
+                price: selectedRide.price.replace('₹', '')
+            };
+            
+            Object.keys(fields).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>

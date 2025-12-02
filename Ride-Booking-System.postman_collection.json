@@ -1,0 +1,71 @@
+{
+	"info": {
+		"name": "Ride Booking System",
+		"description": "Simple microservices ride booking system with Kafka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Request Ride",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"riderName\": \"Sumanth\",\n  \"pickup\": \"Bangalore\",\n  \"drop\": \"BTM\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/rider/request",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8081",
+					"path": ["rider", "request"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request Ride - Different Location",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"riderName\": \"John\",\n  \"pickup\": \"Airport\",\n  \"drop\": \"City Center\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/rider/request",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8081",
+					"path": ["rider", "request"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check - Rider Service",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "http://localhost:8081/actuator/health",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8081",
+					"path": ["actuator", "health"]
+				}
+			},
+			"response": []
+		}
+	]
+}

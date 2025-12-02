@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Rides</title>
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 My Rides</h1>
+            <div class="user-info">
+                <span th:text="'Welcome, ' + ${user.fullName}">Welcome, User</span>
+                <a href="/passenger" class="link-btn">Book Ride</a>
+                <a href="/logout" class="link-btn">Logout</a>
+            </div>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(rides)}" class="no-rides">
+            <p>You haven't booked any rides yet.</p>
+            <a href="/passenger" class="btn">Book Your First Ride</a>
+        </div>
+        
+        <div th:each="ride : ${rides}" class="ride-card">
+            <div class="ride-info">
+                <h4 th:text="'Ride ID: ' + ${ride.rideId}">Ride ID</h4>
+                <p><strong>From:</strong> <span th:text="${ride.pickup}"></span></p>
+                <p><strong>To:</strong> <span th:text="${ride.drop}"></span></p>
+                <p><strong>Status:</strong> 
+                    <span th:text="${ride.status}" 
+                          th:class="${ride.status == 'ACCEPTED' ? 'status-accepted' : 'status-requested'}">
+                    </span>
+                </p>
+                <p th:if="${ride.driverName}" th:text="'Driver: ' + ${ride.driverName}">Driver</p>
+                <p><strong>Requested:</strong> <span th:text="${ride.createdAt}"></span></p>
+            </div>
+        </div>
+        
+        <button onclick="location.reload()" class="refresh-btn">🔄 Refresh Status</button>
+    </div>
+</body>
+</html>

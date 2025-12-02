@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Driver Dashboard</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚙 Driver Dashboard</h1>
+            <div class="user-info">
+                <span th:text="'Welcome, ' + ${user.fullName}">Welcome, Driver</span>
+                <a href="/logout" class="link-btn">Logout</a>
+            </div>
+        </div>
+        
+        <div class="driver-layout">
+            <div class="rides-panel">
+                <h3>Available Ride Requests:</h3>
+                
+                <div th:if="${#lists.isEmpty(availableRides)}" class="no-rides">
+                    <p>No ride requests available at the moment.</p>
+                    <button onclick="location.reload()" class="refresh-btn">🔄 Refresh</button>
+                </div>
+        
+                <div th:each="ride : ${availableRides}" class="ride-card" th:data-ride-id="${ride.rideId}">
+                    <div class="ride-info">
+                        <h4 th:text="${ride.passengerName}">Passenger Name</h4>
+                        <p><strong>From:</strong> <span th:text="${ride.pickup}"></span></p>
+                        <p><strong>To:</strong> <span th:text="${ride.drop}"></span></p>
+                        <p><strong>Requested:</strong> <span th:text="${ride.createdAt}"></span></p>
+                        <p class="distance" th:id="'distance-' + ${ride.rideId}">Calculating distance...</p>
+                    </div>
+                    
+                    <form th:action="@{/accept-ride}" method="post" class="accept-form">
+                        <input type="hidden" th:value="${ride.rideId}" name="rideId">
+                        <button type="submit" class="accept-btn">Accept Ride</button>
+                    </form>
+                </div>
+                
+                <button onclick="location.reload()" class="refresh-btn">🔄 Refresh Requests</button>
+            </div>
+            
+            <div class="map-panel">
+                <div id="driverMap"></div>
+                <div class="map-info">
+                    <p>Click on a ride to see route on map</p>
+                    <button id="getDriverLocation" class="location-btn">📍 My Location</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let driverMap, driverMarker;
+            let ridesData = [];
+
+            // Initialize map when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                driverMap = L.map('driverMap').setView([12.9716, 77.5946], 12);
+
+                // Add OpenStreetMap tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(driverMap);
+
+                // Get driver's current location
+                getDriverCurrentLocation();
+                
+                // Load sample rides data
+                loadRidesData();
+            });
+
+            function getDriverCurrentLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        driverMap.setView([lat, lng], 13);
+                        
+                        if (driverMarker) driverMap.removeLayer(driverMarker);
+                        driverMarker = L.marker([lat, lng], {
+                            icon: L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41]
+                            })
+                        }).addTo(driverMap).bindPopup('Your Location');
+                    });
+                }
+            }
+
+            function loadRidesData() {
+                // Sample ride locations
+                const sampleRides = [
+                    {id: 1, pickup: [12.9716, 77.5946], drop: [12.9352, 77.6245]},
+                    {id: 2, pickup: [12.9279, 77.6271], drop: [12.9698, 77.7500]}
+                ];
+                
+                ridesData = sampleRides;
+                displayRidesOnMap();
+                setupRideCardClicks();
+            }
+            
+            function setupRideCardClicks() {
+                document.querySelectorAll('.ride-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const rideId = this.dataset.rideId;
+                        showRideOnMap(rideId);
+                    });
+                });
+            }
+
+            function displayRidesOnMap() {
+                ridesData.forEach(ride => {
+                    // Pickup marker (green)
+                    L.marker(ride.pickup, {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41]
+                        })
+                    }).addTo(driverMap).bindPopup(`Pickup - Ride ${ride.id}`);
+                    
+                    // Drop marker (red)
+                    L.marker(ride.drop, {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41]
+                        })
+                    }).addTo(driverMap).bindPopup(`Drop - Ride ${ride.id}`);
+                });
+            }
+
+            function showRideOnMap(rideId) {
+                const ride = ridesData.find(r => r.id === rideId);
+                if (ride) {
+                    // Fit map to show both pickup and drop
+                    const group = new L.featureGroup([L.marker(ride.pickup), L.marker(ride.drop)]);
+                    driverMap.fitBounds(group.getBounds().pad(0.1));
+                    
+                    // Calculate distance (simple straight-line distance)
+                    const distance = driverMap.distance(ride.pickup, ride.drop);
+                    const distanceKm = (distance / 1000).toFixed(1);
+                    
+                    const distanceElement = document.getElementById(`distance-${rideId}`);
+                    if (distanceElement) {
+                        distanceElement.innerHTML = `Distance: ~${distanceKm} km`;
+                    }
+                }
+            }
+
+            document.getElementById('getDriverLocation').addEventListener('click', getDriverCurrentLocation);
+        </script>
+    </div>
+</body>
+</html>

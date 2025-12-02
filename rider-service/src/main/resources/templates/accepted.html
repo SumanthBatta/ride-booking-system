@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ride Accepted - RideShare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .success-title {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .success-message {
+            color: #4a5568;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .ride-details {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .ride-details h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .detail-value {
+            color: #2d3748;
+            font-weight: 500;
+        }
+        
+        .status-badge {
+            background: #48bb78;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+        
+        .contact-info {
+            background: #edf2f7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        
+        @media (max-width: 480px) {
+            .success-container {
+                padding: 30px 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1 class="success-title">Ride Accepted Successfully!</h1>
+        <p class="success-message" th:text="${success} ?: 'You have successfully accepted this ride. The passenger will be notified.'"></p>
+        
+        <div class="ride-details" th:if="${ride}">
+            <h3>📋 Ride Details</h3>
+            
+            <div class="detail-row">
+                <span class="detail-label">Ride ID:</span>
+                <span class="detail-value" th:text="${ride.id}">RIDE-123</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Passenger:</span>
+                <span class="detail-value" th:text="${ride.passengerName}">John Doe</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Driver:</span>
+                <span class="detail-value" th:text="${ride.driverName}">You</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">📍 Pickup:</span>
+                <span class="detail-value" th:text="${ride.pickup}">Location</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">🎯 Drop-off:</span>
+                <span class="detail-value" th:text="${ride.drop}">Destination</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="status-badge" th:text="${ride.status}">ACCEPTED</span>
+            </div>
+        </div>
+        
+        <div class="contact-info">
+            <strong>📞 Next Steps:</strong><br>
+            Contact the passenger to coordinate pickup time and location. Drive safely!
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/driver" class="btn btn-primary">📊 Back to Dashboard</a>
+            <a href="/" class="btn btn-secondary">🏠 Home</a>
+        </div>
+    </div>
+</body>
+</html>

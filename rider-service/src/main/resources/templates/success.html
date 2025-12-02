@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ride Booked Successfully</title>
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Ride Booked Successfully!</h1>
+        
+        <div class="ride-details">
+            <h3>Ride Details:</h3>
+            <p><strong>Ride ID:</strong> <span th:text="${ride.rideId}"></span></p>
+            <p><strong>Passenger:</strong> <span th:text="${ride.passengerName}"></span></p>
+            <p><strong>From:</strong> <span th:text="${ride.pickup}"></span></p>
+            <p><strong>To:</strong> <span th:text="${ride.drop}"></span></p>
+            <p><strong>Status:</strong> <span th:text="${ride.status}"></span></p>
+        </div>
+        
+        <a th:href="@{'/status/' + ${ride.passengerName}}" class="btn">Track My Rides</a>
+        <a href="/passenger" class="btn">Book Another Ride</a>
+    </div>
+</body>
+</html>
